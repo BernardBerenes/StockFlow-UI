@@ -1,65 +1,72 @@
 import { useState } from 'react';
-import { useProducts } from '@/hooks/useProducts';
-import type { Product } from '@/types/product';
-import { createProduct, updateProduct, deleteProduct } from '@/services/productService';
-import ProductCard from '@/components/ProductCard';
-import Pagination from '@/components/Pagination';
-import ProductFormModal from '@/components/ProductFormModal';
+import { useStores } from '@/hooks/useStores';
+import type { Store } from '@/types/store';
+import { createStore, updateStore, deleteStore } from '@/services/storeService';
+import StoreCard from '@/components/StoreCard';
+import StoreFormModal from '@/components/StoreFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
-function ProductCardSkeleton() {
+function StoreCardSkeleton() {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-pulse">
-      <div className="aspect-square bg-slate-100" />
-      <div className="p-4 space-y-3">
+      <div className="h-24 bg-slate-100 border-b border-slate-100 relative">
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white/50" />
+      </div>
+      <div className="p-5 space-y-3">
         <div className="h-4 bg-slate-100 rounded-lg w-3/4" />
-        <div className="h-3 bg-slate-100 rounded-lg w-full" />
+        <div className="flex items-start gap-2 mt-2">
+            <div className="w-4 h-4 bg-slate-100 rounded-full shrink-0" />
+            <div className="space-y-2 flex-1">
+                <div className="h-3 bg-slate-100 rounded-lg w-full" />
+                <div className="h-3 bg-slate-100 rounded-lg w-5/6" />
+            </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export default function ProductPage() {
-  const { products, metadata, loading, error, setPage, refetch } = useProducts();
+export default function StorePage() {
+  const { stores, loading, error, refetch } = useStores();
 
   // Modal states
   const [formModalOpen, setFormModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingStore, setEditingStore] = useState<Store | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+  const [deletingStore, setDeletingStore] = useState<Store | null>(null);
 
   // Create
   const handleOpenCreate = () => {
-    setEditingProduct(null);
+    setEditingStore(null);
     setFormModalOpen(true);
   };
 
   // Edit
-  const handleOpenEdit = (product: Product) => {
-    setEditingProduct(product);
+  const handleOpenEdit = (store: Store) => {
+    setEditingStore(store);
     setFormModalOpen(true);
   };
 
   // Delete
-  const handleOpenDelete = (product: Product) => {
-    setDeletingProduct(product);
+  const handleOpenDelete = (store: Store) => {
+    setDeletingStore(store);
     setDeleteModalOpen(true);
   };
 
   // Form submit (create or update)
-  const handleFormSubmit = async (formData: FormData) => {
-    if (editingProduct) {
-      await updateProduct(editingProduct.uuid, formData);
+  const handleFormSubmit = async (data: { name: string }) => {
+    if (editingStore) {
+      await updateStore(editingStore.uuid, data);
     } else {
-      await createProduct(formData);
+      await createStore(data);
     }
     refetch();
   };
 
   // Delete confirm
   const handleDeleteConfirm = async () => {
-    if (deletingProduct) {
-      await deleteProduct(deletingProduct.uuid);
+    if (deletingStore) {
+      await deleteStore(deletingStore.uuid);
       refetch();
     }
   };
@@ -69,9 +76,9 @@ export default function ProductPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Products</h1>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Stores</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Manage your product catalog
+            Manage your store locations
           </p>
         </div>
         <button
@@ -81,7 +88,7 @@ export default function ProductPage() {
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
           </svg>
-          Add Product
+          Add Store
         </button>
       </div>
 
@@ -93,7 +100,7 @@ export default function ProductPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder="Search stores..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all duration-200"
           />
         </div>
@@ -113,7 +120,7 @@ export default function ProductPage() {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
             </svg>
           </div>
-          <h3 className="text-sm font-semibold text-red-800 mb-1">Failed to load products</h3>
+          <h3 className="text-sm font-semibold text-red-800 mb-1">Failed to load stores</h3>
           <p className="text-sm text-red-600 mb-4">{error}</p>
           <button
             onClick={() => refetch()}
@@ -123,21 +130,21 @@ export default function ProductPage() {
           </button>
         </div>
       ) : loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {Array.from({ length: 8 }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
+            <StoreCardSkeleton key={i} />
           ))}
         </div>
-      ) : products.length === 0 ? (
+      ) : stores.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-slate-400">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
-              <line x1="7" y1="7" x2="7.01" y2="7" />
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </div>
-          <h3 className="text-base font-semibold text-slate-800 mb-1">No products found</h3>
-          <p className="text-sm text-slate-500 mb-6">Get started by adding your first product</p>
+          <h3 className="text-base font-semibold text-slate-800 mb-1">No stores found</h3>
+          <p className="text-sm text-slate-500 mb-6">Get started by adding your first store</p>
           <button
             onClick={handleOpenCreate}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 text-white text-sm font-semibold shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-200"
@@ -145,38 +152,37 @@ export default function ProductPage() {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
               <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
             </svg>
-            Add Product
+            Add Store
           </button>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-            {products.map((product) => (
-              <ProductCard
-                key={product.uuid}
-                product={product}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {stores.map((store) => (
+              <StoreCard
+                key={store.uuid}
+                store={store}
                 onEdit={handleOpenEdit}
                 onDelete={handleOpenDelete}
               />
             ))}
           </div>
-          {metadata && <Pagination metadata={metadata} onPageChange={setPage} />}
         </>
       )}
 
       {/* Create/Edit Modal */}
-      <ProductFormModal
+      <StoreFormModal
         isOpen={formModalOpen}
         onClose={() => setFormModalOpen(false)}
         onSubmit={handleFormSubmit}
-        product={editingProduct}
+        store={editingStore}
       />
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={deleteModalOpen}
-        itemName={deletingProduct?.name || ''}
-        itemType="Product"
+        itemName={deletingStore?.name || ''}
+        itemType="Store"
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
       />

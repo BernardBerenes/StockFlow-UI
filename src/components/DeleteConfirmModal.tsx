@@ -2,12 +2,13 @@ import { useState } from 'react';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
-  productName: string;
+  itemName: string;
+  itemType?: string;
   onClose: () => void;
   onConfirm: () => Promise<void>;
 }
 
-export default function DeleteConfirmModal({ isOpen, productName, onClose, onConfirm }: DeleteConfirmModalProps) {
+export default function DeleteConfirmModal({ isOpen, itemName, itemType = 'Product', onClose, onConfirm }: DeleteConfirmModalProps) {
   const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -45,10 +46,10 @@ export default function DeleteConfirmModal({ isOpen, productName, onClose, onCon
           </div>
 
           {/* Text */}
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Delete Product</h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-2">Delete {itemType}</h3>
           <p className="text-sm text-slate-500 leading-relaxed">
             Are you sure you want to delete{' '}
-            <span className="font-semibold text-slate-700">"{productName}"</span>?
+            <span className="font-semibold text-slate-700">"{itemName}"</span>?
             This action cannot be undone.
           </p>
         </div>
