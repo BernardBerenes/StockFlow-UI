@@ -11,14 +11,15 @@ export interface PaginationMetadata {
   total_page: number;
 }
 
-export interface ProductListData {
-  data: Product[];
-  metadata: PaginationMetadata;
-}
-
 export interface ApiResponse<T> {
   message: string;
   data: T;
 }
 
-export type ProductListResponse = ApiResponse<ProductListData>;
+export interface PaginatedApiResponse<T> {
+  message: string;
+  data: T[];
+  metadata: PaginationMetadata;
+}
+
+export type ProductListResponse = PaginatedApiResponse<Product>;

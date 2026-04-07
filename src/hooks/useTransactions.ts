@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Product, PaginationMetadata } from '@/types/product';
-import { listPaginateProduct } from '@/services/productService';
+import type { TransactionHeader } from '@/types/transaction';
+import type { PaginationMetadata } from '@/types/product';
+import { listPaginateTransaction } from '@/services/transactionService';
 
-interface UseProductsReturn {
-  products: Product[];
+interface UseTransactionsReturn {
+  transactions: TransactionHeader[];
   metadata: PaginationMetadata | null;
   loading: boolean;
   error: string | null;
@@ -14,25 +15,25 @@ interface UseProductsReturn {
   refetch: () => void;
 }
 
-export const useProducts = (initialPage = 1, initialSize = 10): UseProductsReturn => {
-  const [products, setProducts] = useState<Product[]>([]);
+export const useTransactions = (initialPage = 1, initialSize = 10): UseTransactionsReturn => {
+  const [transactions, setTransactions] = useState<TransactionHeader[]>([]);
   const [metadata, setMetadata] = useState<PaginationMetadata | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialSize);
 
-  const fetchProducts = useCallback(async () => {
+  const fetchTransactions = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await listPaginateProduct(page, pageSize);
-      setProducts(response.data);
+      const response = await listPaginateTransaction(page, pageSize);
+      setTransactions(response.data);
       setMetadata(response.metadata);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch products';
+      const message = err instanceof Error ? err.message : 'Failed to fetch transactions';
       setError(message);
-      setProducts([]);
+      setTransactions([]);
       setMetadata(null);
     } finally {
       setLoading(false);
@@ -40,11 +41,11 @@ export const useProducts = (initialPage = 1, initialSize = 10): UseProductsRetur
   }, [page, pageSize]);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchTransactions();
+  }, [fetchTransactions]);
 
   return {
-    products,
+    transactions,
     metadata,
     loading,
     error,
@@ -52,6 +53,6 @@ export const useProducts = (initialPage = 1, initialSize = 10): UseProductsRetur
     setPage,
     pageSize,
     setPageSize,
-    refetch: fetchProducts,
+    refetch: fetchTransactions,
   };
 };

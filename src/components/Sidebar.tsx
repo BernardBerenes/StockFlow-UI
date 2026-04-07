@@ -64,6 +64,28 @@ export default function Sidebar() {
             {item.label}
           </NavLink>
         ))}
+        
+        <p className="px-3 mb-3 mt-6 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+          Operations
+        </p>
+        <NavLink
+            to="/transactions"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                isActive
+                  ? 'bg-gradient-to-r from-violet-500/15 to-indigo-500/10 text-violet-300 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+              }`
+            }
+          >
+            <span className="transition-transform duration-200 group-hover:scale-110">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
+                <path d="M14 3v5h5M16 13H8M16 17H8M10 9H8" />
+              </svg>
+            </span>
+            Transactions
+        </NavLink>
       </nav>
 
       {/* Footer */}
