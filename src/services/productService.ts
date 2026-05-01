@@ -1,9 +1,17 @@
 import api from './api';
 import type { ProductListResponse, ApiResponse, Product } from '@/types/product';
 
-export const listPaginateProduct = async (page: number = 1, size: number = 10): Promise<ProductListResponse> => {
+export const listPaginateProduct = async (
+  page: number = 1,
+  size: number = 10,
+  name?: string
+): Promise<ProductListResponse> => {
   const response = await api.get<ProductListResponse>('/product/list-paginate', {
-    params: { page, size },
+    params: {
+      page,
+      size,
+      ...(name ? { name } : {}),
+    },
   });
 
   return response.data;

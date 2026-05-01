@@ -1,5 +1,5 @@
 import api from './api';
-import type { TransactionDetailListResponse, TransactionDetailFormData, TransactionDetail } from '@/types/transactionDetail';
+import type { TransactionDetailListResponse, TransactionDetailFormData } from '@/types/transactionDetail';
 
 export const listTransactionDetails = async (transactionUuid: string): Promise<TransactionDetailListResponse> => {
   const response = await api.get<TransactionDetailListResponse>(`/transaction-detail/list/${transactionUuid}`);
